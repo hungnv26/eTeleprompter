@@ -34,6 +34,12 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.iprompter.iPrompter
         PRODUCT_NAME: eTeleprompter
         INFOPLIST_KEY_CFBundleDisplayName: eTeleprompter
+        # App Sandbox is mandatory on the Mac App Store; iOS is sandboxed
+        # by the OS and needs no entitlements file.
+        CODE_SIGN_ENTITLEMENTS[sdk=macosx*]: Config/eTeleprompter-macOS.entitlements
+        # Required by the Mac App Store; ignored on iOS. Matches the
+        # Productivity primary category on the listing.
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.productivity
         TARGETED_DEVICE_FAMILY: "2"
         SUPPORTS_MACCATALYST: NO
         ENABLE_PREVIEWS: YES
