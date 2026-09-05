@@ -77,7 +77,7 @@ Keyboard shortcuts while presenting
   Down    slower
   Esc     exit the prompter
 
-Source: https://github.com/hungnv26/iPrompter
+Source: https://github.com/hungnv26/eTeleprompter
 TXT
 
 echo "==> Creating $OUT"

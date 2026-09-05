@@ -70,7 +70,7 @@ teleprompter,prompter,script,speech,presentation,video,mirror,autocue,speaking,r
 ## URLs
 
 - **Support URL** — REQUIRED. A page where users can reach you. The GitHub repo
-  works if it is public: `https://github.com/hungnv26/iPrompter`
+  works if it is public: `https://github.com/hungnv26/eTeleprompter`
 - **Privacy policy URL** — REQUIRED for every app, including offline ones. See
   `PRIVACY-POLICY.md` in this folder for text you can host (GitHub Pages, a
   gist, or your own site).
