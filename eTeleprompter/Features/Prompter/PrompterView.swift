@@ -34,7 +34,10 @@ struct PrompterView: View {
     @State private var interaction = InteractionTracker()
 
     /// SPEC F3: controls auto-hide after 3 s of inactivity during playback.
-    private static let autoHideDelay: TimeInterval = 3
+    /// SPEC F3 said 3 s; real-device use on iPhone showed that reads as
+    /// sluggish over the text, so the bar now leaves after 2 s of no
+    /// interaction. A tap on the reading area also hides it on demand.
+    private static let autoHideDelay: TimeInterval = 2
     private let autoHideTick = Timer.publish(every: 0.5, on: .main, in: .common)
         .autoconnect()
 
@@ -70,7 +73,7 @@ struct PrompterView: View {
                                  onKeyDown: handleKeyDown)
                     .ignoresSafeArea()
                 #else
-                TouchInterceptor(onTap: registerInteraction)
+                TouchInterceptor(onTap: toggleControls)
                     .ignoresSafeArea()
                 #endif
 
@@ -239,6 +242,14 @@ struct PrompterView: View {
         if !controlsVisible {
             controlsVisible = true
         }
+    }
+
+    /// A tap on the reading area (not on the bar itself, which sits above
+    /// the touch surface) toggles the controls: hidden ones come back, visible
+    /// ones go away immediately instead of waiting out the auto-hide timer.
+    private func toggleControls() {
+        interaction.lastInteraction = .now
+        controlsVisible.toggle()
     }
 
     private func autoHideIfIdle() {

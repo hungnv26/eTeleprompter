@@ -14,21 +14,33 @@ struct PrompterControlsView: View {
     /// and rotation/settings/exit off the right, so the prompter could not be
     /// paused or exited at all. Compact width stacks the bar into two rows.
     @Environment(\.horizontalSizeClass) private var sizeClass
+    private var compact: Bool { sizeClass == .compact }
+
+    /// Control dimensions. Phone values are deliberately small: the bar is
+    /// an overlay on the reading area, and on a real iPhone the iPad sizes
+    /// read as oversized and, with a larger Dynamic Type setting or Display
+    /// Zoom, clipped the Play button and the speed readout off both edges.
+    private var playW: CGFloat { compact ? 32 : 40 }
+    private var playH: CGFloat { compact ? 24 : 32 }
+    private var btn: CGFloat   { compact ? 22 : 28 }
+    private var icon: CGFloat  { compact ? 16 : 22 }
+    private var gap: CGFloat   { compact ? 6 : 10 }
 
     var body: some View {
         Group {
-            if sizeClass == .compact {
-                VStack(spacing: 10) {
-                    HStack(spacing: 12) {
+            if compact {
+                VStack(spacing: 6) {
+                    HStack(spacing: 8) {
                         transportControls
                         speedControls
                     }
-                    HStack(spacing: 12) {
+                    HStack(spacing: 8) {
                         mirrorControls
-                        Divider().frame(height: 28)
+                        Divider().frame(height: 22)
                         settingsAndExit
                     }
                 }
+                .controlSize(.small)
             } else {
                 HStack(spacing: 16) {
                     transportControls
@@ -40,23 +52,26 @@ struct PrompterControlsView: View {
                 }
             }
         }
-        .padding(.horizontal, sizeClass == .compact ? 14 : 20)
-        .padding(.vertical, 12)
+        .padding(.horizontal, compact ? 12 : 20)
+        .padding(.vertical, compact ? 8 : 12)
         .background(.ultraThinMaterial,
-                    in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    in: RoundedRectangle(cornerRadius: compact ? 14 : 18, style: .continuous))
         .frame(maxWidth: 860)
+        // Accessibility text sizes must not inflate a control overlay past the
+        // screen edge; icons and the numeric readout stay legible at .large.
+        .dynamicTypeSize(...DynamicTypeSize.large)
     }
 
     // MARK: Transport
 
     private var transportControls: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: gap) {
             Button {
                 engine.togglePlayPause()
             } label: {
                 Image(systemName: engine.state == .playing ? "pause.fill" : "play.fill")
-                    .font(.title2)
-                    .frame(width: 40, height: 32)
+                    .font(compact ? .body : .title2)
+                    .frame(width: playW, height: playH)
             }
             .buttonStyle(.borderedProminent)
             .accessibilityLabel(engine.state == .playing ? "Pause" : "Play")
@@ -65,7 +80,7 @@ struct PrompterControlsView: View {
                 engine.stop()
             } label: {
                 Image(systemName: "stop.fill")
-                    .frame(width: 28, height: 28)
+                    .frame(width: btn, height: btn)
             }
             .buttonStyle(.bordered)
             .accessibilityLabel("Stop")
@@ -83,25 +98,25 @@ struct PrompterControlsView: View {
     }
 
     private var speedControls: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: gap) {
             Button {
                 engine.decreaseSpeed()
             } label: {
                 Image(systemName: "minus")
-                    .frame(width: 22, height: 22)
+                    .frame(width: icon, height: icon)
             }
             .buttonStyle(.bordered)
             .accessibilityLabel("Slower")
 
             Slider(value: speedBinding, in: PrompterEngine.speedRange)
-                .frame(minWidth: 90, maxWidth: 260)
+                .frame(minWidth: compact ? 56 : 120, maxWidth: 260)
                 .accessibilityLabel("Speed")
 
             Button {
                 engine.increaseSpeed()
             } label: {
                 Image(systemName: "plus")
-                    .frame(width: 22, height: 22)
+                    .frame(width: icon, height: icon)
             }
             .buttonStyle(.bordered)
             .accessibilityLabel("Faster")
@@ -110,12 +125,14 @@ struct PrompterControlsView: View {
             // while the actual rate ramps over 0.3 s — SPEC F2).
             VStack(spacing: 0) {
                 Text("\(Int(engine.speed))")
-                    .font(.title3.weight(.semibold).monospacedDigit())
+                    .font((compact ? Font.subheadline : .title3).weight(.semibold).monospacedDigit())
                 Text("pts/s")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
-            .frame(minWidth: 44)
+            .frame(minWidth: compact ? 34 : 44)
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
             .accessibilityElement(children: .combine)
             .accessibilityLabel("Speed \(Int(engine.speed)) points per second")
         }
@@ -145,7 +162,7 @@ struct PrompterControlsView: View {
                 }
             } label: {
                 Image(systemName: "rotate.right")
-                    .frame(width: 22, height: 22)
+                    .frame(width: icon, height: icon)
             }
             .menuStyle(.button)
             .buttonStyle(.bordered)
@@ -162,7 +179,7 @@ struct PrompterControlsView: View {
                 showSettings.toggle()
             } label: {
                 Image(systemName: "gearshape.fill")
-                    .frame(width: 28, height: 28)
+                    .frame(width: btn, height: btn)
             }
             .buttonStyle(.bordered)
             .accessibilityLabel("Reading settings")
@@ -181,7 +198,7 @@ struct PrompterControlsView: View {
 
             Button(action: onExit) {
                 Image(systemName: "xmark")
-                    .frame(width: 28, height: 28)
+                    .frame(width: btn, height: btn)
             }
             .buttonStyle(.bordered)
             .accessibilityLabel("Close prompter")
