@@ -2,24 +2,31 @@ import Foundation
 import Compression
 import PDFKit
 import UniformTypeIdentifiers
+#if canImport(AppKit)
+import AppKit
+#endif
 
 /// Turns a user-picked document into plain text for a script.
 ///
-/// Supported on every platform: PDF (PDFKit), Word .docx (a zip whose
-/// `word/document.xml` holds the text — parsed here directly, no third-party
-/// library), plus .txt, .md and .rtf. Legacy binary .doc is deliberately not
-/// supported: it has no public parser on iOS and is no longer needed.
+/// Supported everywhere: PDF (PDFKit), .docx (a zip whose `word/document.xml`
+/// holds the text — parsed here directly, no third-party library), .txt,
+/// .md and .rtf. Legacy binary .doc is a proprietary format with no public
+/// parser on iOS; it is supported on macOS through AppKit and reported
+/// honestly as unsupported on iOS rather than half-decoded.
 enum DocumentTextExtractor {
 
     enum ImportError: LocalizedError {
         case unsupportedType(String)
+        case legacyDocNotSupportedHere
         case unreadable
         case noText
 
         var errorDescription: String? {
             switch self {
             case .unsupportedType(let ext):
-                return "“.\(ext)” files can’t be imported. Use PDF or Word (.docx)."
+                return "“.\(ext)” files can’t be imported. Use PDF, Word (.docx), text or RTF."
+            case .legacyDocNotSupportedHere:
+                return "Legacy Word (.doc) files can only be imported on a Mac. Save the file as .docx or PDF and try again."
             case .unreadable:
                 return "The file couldn’t be read."
             case .noText:
@@ -31,6 +38,7 @@ enum DocumentTextExtractor {
     static let supportedTypes: [UTType] = [
         .pdf, .plainText, .text, .rtf,
         UTType("org.openxmlformats.wordprocessingml.document"),
+        UTType("com.microsoft.word.doc"),
         UTType("net.daringfireball.markdown"),
     ].compactMap { $0 }
 
@@ -51,6 +59,7 @@ enum DocumentTextExtractor {
         switch ext {
         case "pdf":           raw = try pdfText(url)
         case "docx":          raw = try docxText(url)
+        case "doc":           raw = try legacyDocText(url)
         case "rtf":           raw = try rtfText(url)
         case "txt", "md", "markdown", "text":
             raw = try plainText(url)
@@ -99,6 +108,20 @@ enum DocumentTextExtractor {
             }
         }
         return out
+    }
+
+    private static func legacyDocText(_ url: URL) throws -> String {
+        #if canImport(AppKit)
+        guard let data = try? Data(contentsOf: url),
+              let attr = try? NSAttributedString(
+                data: data,
+                options: [.documentType: NSAttributedString.DocumentType.docFormat],
+                documentAttributes: nil)
+        else { throw ImportError.unreadable }
+        return attr.string
+        #else
+        throw ImportError.legacyDocNotSupportedHere
+        #endif
     }
 
     /// .docx = zip archive; the body text lives in word/document.xml as

@@ -68,7 +68,7 @@ struct ScriptListView: View {
                 } label: {
                     Label("Import Script", systemImage: "square.and.arrow.down")
                 }
-                .help("Import a PDF or Word file as a new script")
+                .help("Import a PDF, Word, text or RTF file as a new script")
             }
         }
         .fileImporter(
