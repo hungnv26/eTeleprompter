@@ -23,16 +23,20 @@ final class SettingsStore {
     private var storage: ReadingSettings
     @ObservationIgnored private let defaults: UserDefaults
 
-    /// - Parameter userDefaults: injection point for tests; production uses
-    ///   `.standard`.
-    init(userDefaults: UserDefaults = .standard) {
+    /// - Parameters:
+    ///   - userDefaults: injection point for tests; production uses `.standard`.
+    ///   - fallback: used when nothing valid is stored yet. The app passes
+    ///     `.phoneDefault` on iPhone; the platform check stays out of this
+    ///     Foundation-only module.
+    init(userDefaults: UserDefaults = .standard,
+         fallback: ReadingSettings = .default) {
         self.defaults = userDefaults
         if let data = userDefaults.data(forKey: Self.storageKey),
            let decoded = try? JSONDecoder().decode(ReadingSettings.self, from: data) {
             storage = decoded
         } else {
-            // Missing or corrupt data: fall back to SPEC defaults.
-            storage = .default
+            // Missing or corrupt data: fall back to the supplied defaults.
+            storage = fallback
         }
     }
 

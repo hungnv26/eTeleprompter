@@ -16,7 +16,16 @@ struct PrompterView: View {
     @Environment(AppState.self) private var appState
 
     @State private var engine = PrompterEngine(clock: DisplayLinkClock())
-    @State private var settingsStore = SettingsStore()
+    @State private var settingsStore = SettingsStore(fallback: Self.firstRunDefaults)
+
+    /// iPhone gets a smaller first-run font; see ReadingSettings.phoneDefault.
+    private static var firstRunDefaults: ReadingSettings {
+        #if os(iOS)
+        UIDevice.current.userInterfaceIdiom == .phone ? .phoneDefault : .default
+        #else
+        .default
+        #endif
+    }
     @State private var controlsVisible = true
     @State private var showSettings = false
     /// Mutated on every interaction WITHOUT invalidating the view (it is a
@@ -100,6 +109,12 @@ struct PrompterView: View {
                 .animation(.easeOut(duration: 0.2), value: controlsVisible)
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
+            #if os(iOS)
+            // Reading mode hides unnecessary UI (SPEC F3). On iPad this also
+            // gives the text the full height it had before safe-area insets
+            // were respected; on Dynamic Island phones the island inset stays.
+            .statusBarHidden(true)
+            #endif
         }
         .contentShape(Rectangle())
         .onTapGesture { registerInteraction() } // Tap anywhere reveals controls (iPad).

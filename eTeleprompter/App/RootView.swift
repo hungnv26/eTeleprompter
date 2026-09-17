@@ -21,8 +21,11 @@ struct RootView: View {
             // leaked input. Sidebar/script selection live in this view's
             // @State, so the editor returns to the same script on exit.
             if let script = appState.prompterScript {
+                // The prompter's own background and touch surface extend to
+                // the screen edges; the text and control bar must NOT, or on
+                // iPhone the first line runs under the status bar / Dynamic
+                // Island and the bar sits on the home indicator.
                 PrompterView(script: script)
-                    .ignoresSafeArea()
             } else {
                 splitView
             }

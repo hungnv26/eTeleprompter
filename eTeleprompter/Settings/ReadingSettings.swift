@@ -74,6 +74,16 @@ struct ReadingSettings: Codable, Equatable {
     /// white text on black, no mirror, 0°, 60 pts/s.
     static let `default` = ReadingSettings()
 
+    /// First-run defaults for a phone-sized screen. Identical to `default`
+    /// except 30 pt instead of 48: on a ~400 pt-wide display, 48 pt leaves
+    /// only three or four words per line. Settings are per-device (no sync),
+    /// so this only ever seeds a phone that has nothing stored yet.
+    static let phoneDefault: ReadingSettings = {
+        var s = ReadingSettings()
+        s.fontSize = 30
+        return s
+    }()
+
     // MARK: Resolved colors
 
     /// The text swatch, falling back to the default (white) if the persisted

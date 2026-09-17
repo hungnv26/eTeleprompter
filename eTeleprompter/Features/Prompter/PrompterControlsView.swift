@@ -9,16 +9,38 @@ struct PrompterControlsView: View {
     @Binding var showSettings: Bool
     var onExit: () -> Void
 
+    /// iPhone (compact width) cannot fit all ten controls in one row: on a
+    /// 402 pt screen the single-row layout clipped Play/Stop off the left edge
+    /// and rotation/settings/exit off the right, so the prompter could not be
+    /// paused or exited at all. Compact width stacks the bar into two rows.
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
     var body: some View {
-        HStack(spacing: 16) {
-            transportControls
-            speedControls
-            Spacer(minLength: 8)
-            mirrorControls
-            Divider().frame(height: 28)
-            settingsAndExit
+        Group {
+            if sizeClass == .compact {
+                VStack(spacing: 10) {
+                    HStack(spacing: 12) {
+                        transportControls
+                        speedControls
+                    }
+                    HStack(spacing: 12) {
+                        mirrorControls
+                        Divider().frame(height: 28)
+                        settingsAndExit
+                    }
+                }
+            } else {
+                HStack(spacing: 16) {
+                    transportControls
+                    speedControls
+                    Spacer(minLength: 8)
+                    mirrorControls
+                    Divider().frame(height: 28)
+                    settingsAndExit
+                }
+            }
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, sizeClass == .compact ? 14 : 20)
         .padding(.vertical, 12)
         .background(.ultraThinMaterial,
                     in: RoundedRectangle(cornerRadius: 18, style: .continuous))
@@ -72,7 +94,7 @@ struct PrompterControlsView: View {
             .accessibilityLabel("Slower")
 
             Slider(value: speedBinding, in: PrompterEngine.speedRange)
-                .frame(minWidth: 120, maxWidth: 260)
+                .frame(minWidth: 90, maxWidth: 260)
                 .accessibilityLabel("Speed")
 
             Button {
