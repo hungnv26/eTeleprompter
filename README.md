@@ -6,7 +6,7 @@ Write or import a script, put your device on a mirror rig or read straight from 
 
 <a href="https://apps.apple.com/app/id6805915935"><img src="https://toolbox.marketingtools.apple.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" height="50"></a>
 
-Free on the App Store for iPhone, iPad and Mac.
+Free on the App Store for iPhone, iPad and Mac. Made by [Hung Ngo](https://hungngo.net).
 
 ## What it does
 
@@ -260,10 +260,11 @@ The following are intentionally not building in this release:
 - Import/export of scripts
 - Per-script settings (reading view settings are global)
 - Undo history beyond the system text-field undo
-- iPhone layout (iPad/macOS only)
 - Rich text or Markdown rendering
 - Nested folders, custom sort, tags, or remote control
 
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+Built by [Hung Ngo](https://hungngo.net) · [hungngo.net](https://hungngo.net)
