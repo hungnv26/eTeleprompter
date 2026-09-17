@@ -1,8 +1,8 @@
 import XCTest
 @testable import eTeleprompter
 
-/// Runs the extractor against real files: Word, RTF and legacy .doc produced
-/// by macOS's own `textutil`, a PDF from the print system, and a hand-built
+/// Runs the extractor against real files: Word and RTF produced by macOS's
+/// own `textutil`, a PDF from the print system, and a hand-built
 /// DEFLATE-compressed .docx that exercises the zip inflate path directly.
 final class DocumentTextExtractorTests: XCTestCase {
 
@@ -33,29 +33,17 @@ final class DocumentTextExtractorTests: XCTestCase {
         XCTAssertEqual(text.components(separatedBy: "\n").count, 4, "expected 3 paragraphs + br: \(text)")
     }
 
-    func testLegacyDoc() throws {
-        #if os(macOS)
-        try assertExtracts("sample.doc")
-        #else
-        XCTAssertThrowsError(try DocumentTextExtractor.text(from: fixture("sample.doc"))) { error in
-            guard case DocumentTextExtractor.ImportError.legacyDocNotSupportedHere = error else {
-                return XCTFail("expected legacyDocNotSupportedHere, got \(error)")
-            }
-        }
-        #endif
-    }
-
     func testSuggestedTitleStripsExtension() throws {
         XCTAssertEqual(DocumentTextExtractor.suggestedTitle(for: URL(fileURLWithPath: "/x/Keynote Draft.docx")), "Keynote Draft")
     }
 
     func testUnsupportedExtensionIsRejectedClearly() {
-        let url = URL(fileURLWithPath: "/nonexistent/file.xyz")
+        let url = URL(fileURLWithPath: "/nonexistent/file.doc")
         XCTAssertThrowsError(try DocumentTextExtractor.text(from: url)) { error in
             guard case DocumentTextExtractor.ImportError.unsupportedType(let ext) = error else {
                 return XCTFail("expected unsupportedType, got \(error)")
             }
-            XCTAssertEqual(ext, "xyz")
+            XCTAssertEqual(ext, "doc")
         }
     }
 

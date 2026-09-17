@@ -143,7 +143,7 @@ struct EditorView: View {
             } label: {
                 Label("Import", systemImage: "square.and.arrow.down")
             }
-            .help("Import a PDF, Word, text or RTF file into this script")
+            .help("Import a PDF or Word file into this script")
         }
         ToolbarItem(placement: .primaryAction) {
             Button {
