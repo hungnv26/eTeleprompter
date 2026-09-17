@@ -230,3 +230,7 @@ The following are intentionally not building in this release:
 - iPhone layout (iPad/macOS only)
 - Rich text or Markdown rendering
 - Nested folders, custom sort, tags, or remote control
+
+## License
+
+MIT — see [LICENSE](LICENSE).
