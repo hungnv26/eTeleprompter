@@ -1,28 +1,61 @@
 # eTeleprompter
 
-eTeleprompter is a distraction-free native teleprompter for presenters using iPad or macOS. Mount an iPad on a mirror-rig or read directly from a Mac screen, then open a script and scroll it at a steady, controllable speed while reading aloud. The app is fast, minimal, and works entirely offline with no accounts or cloud services.
+**A distraction-free teleprompter for iPhone, iPad and Mac.**
+
+Write or import a script, put your device on a mirror rig or read straight from the screen, and scroll it at a speed you control to the point per second. Mirror and rotation modes are built for teleprompter glass. No accounts, no cloud, no network — your scripts never leave your device.
+
+<a href="https://apps.apple.com/app/id6805915935"><img src="https://toolbox.marketingtools.apple.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" height="50"></a>
+
+Free on the App Store for iPhone, iPad and Mac.
+
+## What it does
+
+- **Steady, precise scrolling** — 10 to 300 points per second, adjustable by slider, ±10 buttons or arrow keys, with every change eased over a third of a second so the text never jumps. Playback stops itself at the end.
+- **Built for mirror rigs** — flip horizontally, vertically, or rotate to any right angle, in any combination, live during playback. The controls stay the right way round.
+- **A reading view that suits your eyes** — five typefaces, 20–120 pt, adjustable spacing and margins, eight text and background colours.
+- **Import from PDF and Word** — bring in a `.pdf` or `.docx` as a new script, or into one you already have (`.doc` on the Mac too).
+- **Scripts, organised** — named folders, search across titles and content, live word count and reading time. Every edit saves itself.
+- **Keyboard control** — Space to play/pause, ↑↓ for speed, Esc to exit.
 
 ## Screenshots
 
-**Reading view** — full-screen, distraction-free, scrolling at a constant 60 pts/s. The control bar auto-hides after 3 seconds of inactivity and reappears on tap, so nothing sits between you and the script while you present.
+<table>
+  <tr>
+    <th align="center">iPhone</th>
+    <th align="center">iPad</th>
+    <th align="center">Mac</th>
+  </tr>
+  <tr>
+    <td align="center" valign="top"><img src="docs/screenshots/iphone-prompter.png" width="230" alt="Reading view on iPhone — large scrolling text with a compact two-row control bar"></td>
+    <td align="center" valign="top"><img src="docs/screenshots/ipad-prompter.png" width="360" alt="Reading view on iPad — full-screen script with transport, speed, mirror and settings controls"></td>
+    <td align="center" valign="top"><img src="docs/screenshots/mac-prompter.png" width="440" alt="Reading view on Mac — script scrolling in a window with the control bar"></td>
+  </tr>
+  <tr>
+    <td align="center" valign="top"><img src="docs/screenshots/iphone-library.png" width="230" alt="Script library on iPhone"></td>
+    <td align="center" valign="top"><img src="docs/screenshots/ipad-library.png" width="360" alt="Library and editor on iPad — folders, script list and editor with live word count"></td>
+    <td align="center" valign="top"><img src="docs/screenshots/mac-library.png" width="440" alt="Library and editor on Mac — three-column layout"></td>
+  </tr>
+</table>
 
-![eTeleprompter reading view on iPad, scrolling a script with the transport controls showing speed at 60 pts/s](docs/screenshots/prompter-reading-view.png)
+The reading view is the whole point: the control bar hides itself after two seconds of playback and comes back with a tap (or a mouse move on the Mac), so nothing sits between you and the words.
 
-**Script library** — folders in the sidebar, scripts in the middle sorted by most recently modified, and the editor on the right with live word count and estimated reading time. Every edit auto-saves; there is no Save button.
+---
 
-![eTeleprompter script library on iPad, showing the folder sidebar, script list, and editor with a 328-word script](docs/screenshots/script-library.png)
+## For developers
+
+The rest of this document covers building from source.
 
 ## Requirements
 
 - **Xcode 26 or later**
-- **iOS deployment:** iPadOS 17 or later
+- **iOS deployment:** iOS / iPadOS 17 or later (iPhone and iPad)
 - **macOS deployment:** macOS 14 or later
 - **Project generation:** eTeleprompter is generated from `project.yml` using XcodeGen. The `eTeleprompter.xcodeproj` file is generated; never edit it directly. Instead, add or remove Swift files under `eTeleprompter/` or `eTeleprompterTests/` folders, and Xcode automatically picks them up via synchronized folders.
 
 ### Signing (only needed to run on a physical device)
 
 Simulator and macOS builds use ad-hoc signing and need no setup. To install on a
-real iPad, supply your own Apple Developer Team ID — it is intentionally not in
+real iPhone or iPad, supply your own Apple Developer Team ID — it is intentionally not in
 this repo, since it identifies a specific developer account:
 
 ```bash
