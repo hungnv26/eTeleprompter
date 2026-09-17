@@ -14,22 +14,22 @@ automatically; paste what you want into App Store Connect yourself.
 | Secondary category | Photo & Video |
 | Age rating | 4+ (no objectionable content, no web access, no user-generated sharing) |
 | Price | (your call) |
-| Devices | iPad only — `TARGETED_DEVICE_FAMILY = 2` |
+| Devices | iPhone and iPad — `TARGETED_DEVICE_FAMILY = 1,2` |
 
 ## Promotional text (170 char max)
 
-> A distraction-free teleprompter for iPad. Mount it on a mirror rig or read
-> straight from the screen, at a speed you control to the point per second.
+> A distraction-free teleprompter for iPhone and iPad. Mount it on a mirror rig
+> or read straight from the screen, at a speed you control to the point per second.
 
 ## Description
 
-> eTeleprompter is a distraction-free teleprompter for presenters. Mount your iPad
+> eTeleprompter is a distraction-free teleprompter for presenters. Mount your iPhone or iPad
 > on a mirror rig or read straight from the screen, then scroll your script at
 > a steady, controllable speed while you talk.
 >
 > It does one thing well: it puts your words in front of you and moves them at
 > exactly the pace you want. No accounts, no cloud, no network — your scripts
-> never leave your iPad.
+> never leave your device.
 >
 > SMOOTH, PRECISE SCROLLING
 > Speed is measured in points per second, from 10 to 300, adjustable by slider,
@@ -48,8 +48,12 @@ automatically; paste what you want into App Store Connect yourself.
 > eight text and background colours — white on black by default, the standard
 > for mirror rigs.
 >
+> BRING YOUR SCRIPTS WITH YOU
+> Import a PDF or Word (.docx) file as a new script, or import one into a
+> script you already have — replace the text or add to it.
+>
 > YOUR SCRIPTS, ORGANISED
-> Write or paste scripts, sort them into folders, and search titles and content
+> Write, paste or import scripts, sort them into named folders, and search titles and content
 > as you type. Every edit saves itself — there is no Save button. Each script
 > shows its word count and estimated reading time.
 >
