@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!--
+    eTeleprompter app icon — source of truth. Render with tools-make-icons.py.
+    Subject: the prompter glass (beam-splitter pane) with script lines and the
+    bright reading line the presenter's eye sits on. No wordmark: text in an
+    icon is illegible below 64 px and it is what tied the old icon to the old
+    name.
+  -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1B2A4A"/>
+      <stop offset="1" stop-color="#0B1120"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0E1526"/>
+      <stop offset="1" stop-color="#050912"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.16"/>
+      <stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0.02"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="cue" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5EB6FF"/>
+      <stop offset="1" stop-color="#2F7CF6"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8FA3C4"/>
+      <stop offset="1" stop-color="#3B4A66"/>
+    </linearGradient>
+    <radialGradient id="lens" cx="0.5" cy="0.45" r="0.6">
+      <stop offset="0" stop-color="#7DB7FF"/>
+      <stop offset="0.35" stop-color="#2451B8"/>
+      <stop offset="0.75" stop-color="#0B1A3F"/>
+      <stop offset="1" stop-color="#050912"/>
+    </radialGradient>
+    <filter id="glow" x="-20%" y="-200%" width="140%" height="500%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+    <clipPath id="paneClip">
+      <path d="M156 214 Q156 178 192 178 H832 Q868 178 868 214 L800 662 Q794 700 756 700 H268 Q230 700 224 662 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- ground: iOS masks the corners itself; macOS gets its own mask in the build script -->
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+
+  <!-- shadow the pane casts on the tray -->
+  <ellipse cx="512" cy="712" rx="330" ry="26" fill="#000" opacity="0.45"/>
+
+  <!-- tray / rig base -->
+  <path d="M176 692 H848 Q876 692 876 720 V752 Q876 780 848 780 H176 Q148 780 148 752 V720 Q148 692 176 692 Z" fill="#141C2E"/>
+  <path d="M176 692 H848 Q876 692 876 720 V726 H148 V720 Q148 692 176 692 Z" fill="#26334E"/>
+
+  <!-- lens looking up through the glass -->
+  <circle cx="512" cy="846" r="112" fill="#0B1120"/>
+  <circle cx="512" cy="846" r="100" fill="#1A2440"/>
+  <circle cx="512" cy="846" r="82" fill="url(#lens)"/>
+  <circle cx="512" cy="846" r="82" fill="none" stroke="#5B6C8F" stroke-width="6"/>
+  <circle cx="486" cy="818" r="14" fill="#FFFFFF" opacity="0.55"/>
+
+  <!-- the glass: a pane tilted toward the reader (wider at the top) -->
+  <path d="M156 214 Q156 178 192 178 H832 Q868 178 868 214 L800 662 Q794 700 756 700 H268 Q230 700 224 662 Z"
+        fill="url(#rim)"/>
+  <path d="M170 216 Q170 192 194 192 H830 Q854 192 854 216 L788 656 Q784 686 754 686 H270 Q240 686 236 656 Z"
+        fill="url(#glass)"/>
+
+  <!-- script lines, as seen on the glass -->
+  <g clip-path="url(#paneClip)">
+    <g fill="#5C6B8A">
+      <rect x="252" y="292" width="470" height="34" rx="17"/>
+      <rect x="252" y="356" width="386" height="34" rx="17"/>
+    </g>
+    <!-- reading line: where the eye sits -->
+    <rect x="240" y="428" width="536" height="52" rx="26" fill="url(#cue)" opacity="0.55" filter="url(#glow)"/>
+    <rect x="252" y="436" width="512" height="36" rx="18" fill="url(#cue)"/>
+    <g fill="#3B4760">
+      <rect x="264" y="512" width="420" height="34" rx="17"/>
+      <rect x="276" y="576" width="330" height="34" rx="17"/>
+    </g>
+    <!-- glass reflection -->
+    <path d="M170 192 H520 L300 686 H236 Q214 686 210 660 Z" fill="url(#sheen)"/>
+  </g>
+</svg>
