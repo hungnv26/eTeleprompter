@@ -77,7 +77,18 @@ struct PrompterView: View {
                     .ignoresSafeArea()
                 #endif
 
-                readingContainer(size: geometry.size)
+                // Landscape iPhone: the horizontal safe-area insets (the
+                // Dynamic Island side, ~60 pt each) plus the margin setting
+                // left the text using barely half the screen. The reading
+                // area extends edge to edge; the user's margin setting alone
+                // (10 % default = ~87 pt on a 874 pt phone) keeps the text
+                // clear of the island. Controls stay inside the safe area.
+                readingContainer(size: CGSize(
+                    width: geometry.size.width
+                        + geometry.safeAreaInsets.leading
+                        + geometry.safeAreaInsets.trailing,
+                    height: geometry.size.height))
+                    .ignoresSafeArea(edges: .horizontal)
 
                 #if os(iOS)
                 keyboardShortcutButtons

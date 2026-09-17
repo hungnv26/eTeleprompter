@@ -15,6 +15,9 @@ struct ScriptListView: View {
     @State private var searchText = ""
     @State private var scriptPendingDelete: Script?
 
+    @State private var isImporting = false
+    @State private var importError: String?
+
     /// Scripts of the selected sidebar item, filtered by the live search
     /// query (case-insensitive substring over title AND content, SPEC F1).
     /// `allScripts` is already sorted modifiedDate-descending; filtering
@@ -59,6 +62,25 @@ struct ScriptListView: View {
                 }
                 .help("New Script")
             }
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    isImporting = true
+                } label: {
+                    Label("Import Script", systemImage: "square.and.arrow.down")
+                }
+                .help("Import a PDF, Word, text or RTF file as a new script")
+            }
+        }
+        .fileImporter(
+            isPresented: $isImporting,
+            allowedContentTypes: DocumentTextExtractor.supportedTypes
+        ) { result in
+            importScript(from: result)
+        }
+        .alert("Couldn’t Import", isPresented: isShowingImportError) {
+            Button("OK", role: .cancel) { importError = nil }
+        } message: {
+            Text(importError ?? "")
         }
         .confirmationDialog(
             "Delete Script?",
@@ -142,6 +164,31 @@ struct ScriptListView: View {
         let script = Script(folder: folder)
         modelContext.insert(script)
         selection = script
+    }
+
+    private var isShowingImportError: Binding<Bool> {
+        Binding(get: { importError != nil }, set: { if !$0 { importError = nil } })
+    }
+
+    /// Import: a PDF / Word / text file becomes a new script titled after the
+    /// file, in the selected folder, and opens in the editor.
+    private func importScript(from result: Result<URL, Error>) {
+        switch result {
+        case .failure(let error):
+            importError = error.localizedDescription
+        case .success(let url):
+            do {
+                let text = try DocumentTextExtractor.text(from: url)
+                var folder: Folder?
+                if case .folder(let selected) = sidebarItem { folder = selected }
+                let script = Script(title: DocumentTextExtractor.suggestedTitle(for: url),
+                                    content: text, folder: folder)
+                modelContext.insert(script)
+                selection = script
+            } catch {
+                importError = error.localizedDescription
+            }
+        }
     }
 
     /// Duplicate: identical content, Finder-style "<Title> copy" name, same

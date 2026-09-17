@@ -14,6 +14,12 @@ struct EditorView: View {
     @FocusState private var focusedField: Field?
     @State private var modifiedDateDebounce: Task<Void, Never>?
 
+    /// Import into THIS script: the picked file's text is held here until the
+    /// user chooses to replace the script's content or append to it.
+    @State private var isImporting = false
+    @State private var pendingImport: String?
+    @State private var importError: String?
+
     private enum Field: Hashable {
         case title, content
     }
@@ -42,6 +48,43 @@ struct EditorView: View {
         .navigationBarTitleDisplayMode(.inline)
         #endif
         .toolbar { toolbarContent }
+        .fileImporter(
+            isPresented: $isImporting,
+            allowedContentTypes: DocumentTextExtractor.supportedTypes
+        ) { result in
+            switch result {
+            case .failure(let error): importError = error.localizedDescription
+            case .success(let url):
+                do { pendingImport = try DocumentTextExtractor.text(from: url) }
+                catch { importError = error.localizedDescription }
+            }
+        }
+        .confirmationDialog(
+            "Import into this script",
+            isPresented: isChoosingImportMode,
+            titleVisibility: .visible
+        ) {
+            Button("Replace Contents", role: .destructive) {
+                if let text = pendingImport { script.content = text }
+                pendingImport = nil
+            }
+            Button("Append to End") {
+                if let text = pendingImport {
+                    script.content = script.content.isEmpty
+                        ? text
+                        : script.content.trimmingCharacters(in: .newlines) + "\n\n" + text
+                }
+                pendingImport = nil
+            }
+            Button("Cancel", role: .cancel) { pendingImport = nil }
+        } message: {
+            Text("Replace the current text with the file, or add the file after it?")
+        }
+        .alert("Couldn’t Import", isPresented: isShowingImportError) {
+            Button("OK", role: .cancel) { importError = nil }
+        } message: {
+            Text(importError ?? "")
+        }
         .onChange(of: script.title) { _, _ in scheduleModifiedDateBump() }
         .onChange(of: script.content) { _, _ in scheduleModifiedDateBump() }
         // Reset editor state (focus, pending onChange comparisons) when a
@@ -81,10 +124,26 @@ struct EditorView: View {
         }
     }
 
+    private var isChoosingImportMode: Binding<Bool> {
+        Binding(get: { pendingImport != nil }, set: { if !$0 { pendingImport = nil } })
+    }
+
+    private var isShowingImportError: Binding<Bool> {
+        Binding(get: { importError != nil }, set: { if !$0 { importError = nil } })
+    }
+
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .automatic) {
             statsLabel
+        }
+        ToolbarItem(placement: .automatic) {
+            Button {
+                isImporting = true
+            } label: {
+                Label("Import", systemImage: "square.and.arrow.down")
+            }
+            .help("Import a PDF, Word, text or RTF file into this script")
         }
         ToolbarItem(placement: .primaryAction) {
             Button {

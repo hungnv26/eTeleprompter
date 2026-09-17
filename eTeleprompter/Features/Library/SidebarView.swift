@@ -13,6 +13,11 @@ struct SidebarView: View {
     @State private var renamingFolderID: UUID?
     @State private var folderPendingDelete: Folder?
 
+    /// "New Folder" prompt: the field is prefilled with the next free
+    /// "New Folder N" so accepting the default never produces a duplicate.
+    @State private var isNamingNewFolder = false
+    @State private var newFolderName = ""
+
     var body: some View {
         List(selection: $selection) {
             Label("All Scripts", systemImage: "doc.on.doc")
@@ -56,6 +61,13 @@ struct SidebarView: View {
         } message: { folder in
             Text("\"\(folder.name)\" will be deleted. Its scripts are kept and will appear under All Scripts.")
         }
+        .alert("New Folder", isPresented: $isNamingNewFolder) {
+            TextField("Folder name", text: $newFolderName)
+            Button("Create") { createFolder(named: newFolderName) }
+            Button("Cancel", role: .cancel) { newFolderName = "" }
+        } message: {
+            Text("Enter a name for the folder.")
+        }
     }
 
     private var newFolderButton: some View {
@@ -74,11 +86,30 @@ struct SidebarView: View {
         )
     }
 
+    /// Asks for a name instead of silently inserting "New Folder". Creating
+    /// several folders in a row used to yield identical "New Folder" entries.
     private func addFolder() {
-        let folder = Folder()
+        newFolderName = Self.nextFreeFolderName(existing: folders.map(\.name))
+        isNamingNewFolder = true
+    }
+
+    private func createFolder(named typed: String) {
+        let trimmed = typed.trimmingCharacters(in: .whitespacesAndNewlines)
+        let name = trimmed.isEmpty
+            ? Self.nextFreeFolderName(existing: folders.map(\.name))
+            : trimmed
+        let folder = Folder(name: name)
         modelContext.insert(folder)
         selection = .folder(folder)
-        renamingFolderID = folder.id
+        newFolderName = ""
+    }
+
+    /// "New Folder 1", "New Folder 2", … — the first not already in use.
+    static func nextFreeFolderName(existing: [String]) -> String {
+        let taken = Set(existing)
+        var n = 1
+        while taken.contains("New Folder \(n)") { n += 1 }
+        return "New Folder \(n)"
     }
 
     private func delete(_ folder: Folder) {
